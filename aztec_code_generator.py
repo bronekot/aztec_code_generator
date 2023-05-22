@@ -160,9 +160,7 @@ abbr_modes = {
 
 def prod(x, y, log, alog, gf):
     """Product x times y."""
-    if not x or not y:
-        return 0
-    return alog[(log[x] + log[y]) % (gf - 1)]
+    return 0 if not x or not y else alog[(log[x] + log[y]) % (gf - 1)]
 
 
 def reed_solomon(wd, nd, nc, gf, pp):
@@ -352,12 +350,9 @@ def find_optimal_sequence(data):
                     if char.replace('/S', '').replace('/L', '') in abbr_modes:
                         last_mode = abbr_modes.get(char.replace('/S', '').replace('/L', ''))
                         break
-                if last_mode == 'punct':
-                    # do not use mixed mode for '\r\n' as in mixed mode '\r' and '\n' are separate
-                    if cur_seq[x][-1] + c in punct_2_chars and x != 'mixed':
-                        if cur_len[x] < next_len[x]:
-                            next_len[x] = cur_len[x]
-                            next_seq[x] = cur_seq[x][:-1] + [cur_seq[x][-1] + c]
+                if last_mode == 'punct' and (cur_seq[x][-1] + c in punct_2_chars and x != 'mixed') and cur_len[x] < next_len[x]:
+                    next_len[x] = cur_len[x]
+                    next_seq[x] = cur_seq[x][:-1] + [cur_seq[x][-1] + c]
         if len(next_seq['binary']) - 2 == 32:
             next_len['binary'] += 11
         for i in modes:
@@ -419,10 +414,7 @@ def optimal_sequence_to_bits(optimal_sequence):
     binary_seq_len = 0
     binary_index = 0
     sequence = optimal_sequence[:]
-    while True:
-        if not sequence:
-            break
-        # read one item from sequence
+    while not not sequence:
         ch = sequence.pop(0)
         if binary:
             out_bits += bin(ord(ch))[2:].zfill(char_size.get(mode))
@@ -689,10 +681,9 @@ class AztecCode(object):
         index = 0
         while True:
             # for full mode take a reference grid into account
-            if not self.compact:
-                if (index % side_size) == 5:
-                    index += 1
-                    continue
+            if not self.compact and (index % side_size) == 5:
+                index += 1
+                continue
             # read one bit
             bit = bits_stream.read(1)
             if not bit:
