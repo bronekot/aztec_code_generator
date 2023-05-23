@@ -484,7 +484,7 @@ class AztecCode(object):
                 + 3 * 100.0 / (100 - self.ec_percent)
             )
         )
-        for size, compact in sorted(table.keys()):
+        for size, compact in sorted(table.keys(), key=lambda x: (x[0], -x[1])):
             config = get_config_from_table(size, compact)
             bits = config.get("bits")
             if required_bits_count < bits:
