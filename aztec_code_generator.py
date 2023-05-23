@@ -454,7 +454,7 @@ class AztecCode(object):
                 )
         # If size and compact parameters are not given, find the optimal values.
         else:
-            self.size, self.compact = self.find_suitable_matrix_size()
+            self.size, self.compact = self.find_suitable_matrix_size(min_size=size, max_size=size, compact_code=compact)
         self.__create_matrix()
         self.__encode_data()
 
@@ -467,7 +467,7 @@ class AztecCode(object):
                 line.append(" ")
             self.matrix.append(line)
 
-    def find_suitable_matrix_size(self):
+    def find_suitable_matrix_size(self, min_size=None, max_size=None, compact_code=None):
         """Find suitable matrix size.
         Raise an exception if suitable size is not found.
 
@@ -485,6 +485,12 @@ class AztecCode(object):
             )
         )
         for size, compact in sorted(table.keys(), key=lambda x: (x[0], -x[1])):
+            if compact_code is not None and compact_code != compact:
+                continue
+            if min_size is not None and size < min_size:
+                continue
+            if max_size is not None and size > max_size:
+                raise Exception("Data too big to fit in Aztec code this size!")
             config = get_config_from_table(size, compact)
             bits = config.get("bits")
             if required_bits_count < bits:
