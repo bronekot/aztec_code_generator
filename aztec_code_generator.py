@@ -454,7 +454,9 @@ class AztecCode(object):
                 )
         # If size and compact parameters are not given, find the optimal values.
         else:
-            self.size, self.compact = self.find_suitable_matrix_size(min_size=size, max_size=size, compact_code=compact)
+            self.size, self.compact = self.find_suitable_matrix_size(
+                min_size=size, max_size=size, compact_code=compact
+            )
         self.__create_matrix()
         self.__encode_data()
 
@@ -467,7 +469,9 @@ class AztecCode(object):
                 line.append(" ")
             self.matrix.append(line)
 
-    def find_suitable_matrix_size(self, min_size=None, max_size=None, compact_code=None):
+    def find_suitable_matrix_size(
+        self, min_size=None, max_size=None, compact_code=None
+    ):
         """Find suitable matrix size.
         Raise an exception if suitable size is not found.
 
@@ -787,7 +791,7 @@ class AztecCode(object):
 
 def main():
     data = "Aztec Code 2D :)"
-    aztec_code = AztecCode(data)
+    aztec_code = AztecCode(data, size=23, compact=False, ec_percent=50)
     aztec_code.print_out()
     if ImageDraw is None:
         print("PIL is not installed, cannot generate PNG")
