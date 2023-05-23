@@ -477,16 +477,16 @@ class AztecCode(object):
         """
         optimal_sequence = find_optimal_sequence(self.data)
         out_bits = optimal_sequence_to_bits(optimal_sequence)
+        # calculate minimum required number of bits
+        required_bits_count = int(
+            math.ceil(
+                len(out_bits) * 100.0 / (100 - self.ec_percent)
+                + 3 * 100.0 / (100 - self.ec_percent)
+            )
+        )
         for size, compact in sorted(table.keys()):
             config = get_config_from_table(size, compact)
             bits = config.get("bits")
-            # calculate minimum required number of bits
-            required_bits_count = int(
-                math.ceil(
-                    len(out_bits) * 100.0 / (100 - self.ec_percent)
-                    + 3 * 100.0 / (100 - self.ec_percent)
-                )
-            )
             if required_bits_count < bits:
                 return size, compact
         raise Exception("Data too big to fit in one Aztec code!")
