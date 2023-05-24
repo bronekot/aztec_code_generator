@@ -502,7 +502,6 @@ class AztecCode(object):
             if max_size is not None and size > max_size:
                 raise Exception("Data too big to fit in Aztec code this size!")
             bits = get_config_from_table(size, compact).get("bits")
-            print(required_bits_count, bits)
             if required_bits_count < bits:
                 self.ec_percent = self.solve_ec_percent(bits, len(out_bits))
 
