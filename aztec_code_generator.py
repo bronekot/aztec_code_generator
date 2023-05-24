@@ -501,11 +501,21 @@ class AztecCode(object):
                 continue
             if max_size is not None and size > max_size:
                 raise Exception("Data too big to fit in Aztec code this size!")
-            config = get_config_from_table(size, compact)
-            bits = config.get("bits")
+            bits = get_config_from_table(size, compact).get("bits")
+            print(required_bits_count, bits)
             if required_bits_count < bits:
+                self.ec_percent = self.solve_ec_percent(bits, len(out_bits))
+
                 return size, compact
         raise Exception("Data too big to fit in one Aztec code!")
+
+    def solve_ec_percent(self, bits, L):
+        for ec_guess in range(95, 4, -1):
+            required_bits_count_guess = int(
+                math.ceil(L * 100.0 / (100 - ec_guess) + 3 * 100.0 / (100 - ec_guess))
+            )
+            if required_bits_count_guess < bits:
+                return ec_guess
 
     def to_pil(self, module_size=1):
         """
@@ -817,8 +827,10 @@ def main():
     else:
         aztec_code.save("aztec_code.png", 4)
     print(
-        "Aztec Code info: {0}x{0} {1}".format(
-            aztec_code.size, "(compact)" if aztec_code.compact else ""
+        "Aztec Code info: {0}x{0} {1} {2}".format(
+            aztec_code.size,
+            "(compact)" if aztec_code.compact else "",
+            aztec_code.ec_percent,
         )
     )
 
