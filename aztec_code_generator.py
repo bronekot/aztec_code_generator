@@ -430,7 +430,7 @@ class AztecCode(object):
         data,
         size: int | None = None,
         compact: bool | None = None,
-        ec_percent: int = 23,
+        ec_percent: int | None = 23,
     ):
         """
         Initializes an instance of the QRCode class with the given data, size, compact, and error correction percentage.
@@ -439,7 +439,7 @@ class AztecCode(object):
             data: The data to be encoded into the QR code.
             size: The size of the QR code matrix. If not provided, the optimal size is chosen automatically.
             compact: A boolean indicating whether to use the compact mode or not. If not provided, the optimal mode is chosen automatically.
-            ec_percent: The error correction percentage. Must be between 5 and 95. Defaults to 23 if not provided.
+            ec_percent: The minimal error correction percentage. Must be between 5 and 95. Defaults to 23 if not provided.
 
         Raises:
             Exception: If the provided size and compact values are not found in the sizes table.
@@ -448,7 +448,10 @@ class AztecCode(object):
             None
         """
         self.data = data
-        self.ec_percent = max(5, min(ec_percent, 95))
+        if ec_percent is None:
+            self.ec_percent = 23
+        else:
+            self.ec_percent = max(5, min(ec_percent, 95))
         # If size and compact parameters are given, check if they're valid.
         if size is not None and compact is not None:
             if (size, compact) in table:
@@ -818,8 +821,8 @@ class AztecCode(object):
 
 
 def main():
-    data = "Aztec Code 2D :)"
-    aztec_code = AztecCode(data, size=None, compact=None, ec_percent=23)
+    data = "Aztec Code 2D :) ec=50"
+    aztec_code = AztecCode(data, size=None, compact=None, ec_percent=50)
     aztec_code.print_out()
     if ImageDraw is None:
         print("PIL is not installed, cannot generate PNG")
