@@ -425,7 +425,13 @@ def get_config_from_table(size, compact):
 
 
 class AztecCode(object):
-    def __init__(self, data, size=None, compact=None, ec_percent=23):
+    def __init__(
+        self,
+        data,
+        size: int | None = None,
+        compact: bool | None = None,
+        ec_percent: int = 23,
+    ):
         """
         Initializes an instance of the QRCode class with the given data, size, compact, and error correction percentage.
 
@@ -501,13 +507,15 @@ class AztecCode(object):
                 return size, compact
         raise Exception("Data too big to fit in one Aztec code!")
 
-    def save(self, filename, module_size=1):
-        """Save matrix to image file.
+    def to_pil(self, module_size=1):
+        """
+        Converts the QR code matrix to a PIL image with the specified module size.
 
-        :param str filename: Output image filename.
-        :param int module_size: Barcode module size in pixels.
+        Args:
+            module_size (int): The size of each module in the QR code. Defaults to 1.
 
-        :return: None.
+        Returns:
+            Image: A PIL Image object representing the QR code.
         """
         if ImageDraw is None:
             exc = missing_pil[0](missing_pil[1])
@@ -528,6 +536,17 @@ class AztecCode(object):
                     ),
                     fill=(0, 0, 0) if self.matrix[y][x] == "#" else (255, 255, 255),
                 )
+        return image
+
+    def save(self, filename, module_size=1):
+        """Save matrix to image file.
+
+        :param str filename: Output image filename.
+        :param int module_size: Barcode module size in pixels.
+
+        :return: None.
+        """
+        image = self.to_pil(module_size)
         image.save(filename)
 
     def print_out(self):
@@ -791,7 +810,7 @@ class AztecCode(object):
 
 def main():
     data = "Aztec Code 2D :)"
-    aztec_code = AztecCode(data, size=23, compact=False, ec_percent=50)
+    aztec_code = AztecCode(data, size=None, compact=None, ec_percent=23)
     aztec_code.print_out()
     if ImageDraw is None:
         print("PIL is not installed, cannot generate PNG")
