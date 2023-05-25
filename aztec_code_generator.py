@@ -8,30 +8,16 @@
 
     :copyright: (c) 2016-2022 by Dmitry Alimov.
     :license: The MIT License (MIT), see LICENSE for more details.
+
+    Forked and improved by Andrei Dziuba.
+    - Added support for selecting minimum error correction level.
+    - Increased performance.
 """
 
-import math
-import numbers
-import sys
+
 from azteccode_class import AztecCode
-
-try:
-    from PIL import Image, ImageDraw
-except ImportError:
-    Image = ImageDraw = None
-    missing_pil = sys.exc_info()
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-
 from tables import *
 from aztecfunctions import *
-
-
-
-
 
 
 def main():
